@@ -1,0 +1,25 @@
+uploads = []
+
+[[generated]]
+id = "990GH71LnlUW-l1bNjr23"
+uri = "file://artifacts/wreaths-mobile/assets/images/icon.png"
+type = "image"
+title = "wreath app icon"
+
+[[generated]]
+id = "D8d0qpPwMYxE7-DG4qmJ8"
+uri = "file://artifacts/wreaths-mobile/assets/images/wreath-hero.png"
+type = "image"
+title = "wreath hero"
+
+[[generated]]
+id = "21Fgqouf0f_dtSbBoyLq6"
+uri = "file://artifacts/wreaths-mobile/assets/images/gallery-hero.png"
+type = "image"
+title = "gallery hero"
+
+[[outputs]]
+id = "mltbFtPUoyKP_eQ-6O0JG"
+uri = "file://magicalwreaths-qr.png"
+type = "image"
+title = "MagicalWreaths.com QR Code"
