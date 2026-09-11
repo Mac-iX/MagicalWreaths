@@ -1,23 +1,8 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
+import { testimonials } from "@/data/site";
 
-const TESTIMONIALS = [
-  {
-    name: "Linda H.",
-    location: "Oak Island, NC",
-    text: "Debbie made the most gorgeous coastal wreath for our beach house door. Every neighbor that walks by asks where we got it. She truly puts her heart into every piece.",
-  },
-  {
-    name: "Carol Ann B.",
-    location: "Wilmington, NC",
-    text: "I ordered a custom bow for my mailbox and it stopped traffic — literally. Three people knocked on my door asking for Debbie's number. Quality and care like you just don't find anymore.",
-  },
-  {
-    name: "Patsy F.",
-    location: "Shallotte, NC",
-    text: "She had my wreath done in less than a week and it was exactly what I described. Southern charm through and through. I've already ordered two more for Christmas gifts.",
-  }
-];
+const TESTIMONIALS = testimonials;
 
 export function Testimonials() {
   return (

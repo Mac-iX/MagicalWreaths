@@ -3,89 +3,9 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { X } from "lucide-react";
-import springWreath from "@assets/Untitled_design_-_3_1780513318375.png";
-import coastalWreath from "@assets/Untitled_design_-_7_1780513318375.png";
-import sunWreath from "@assets/Untitled_design_-_6_1780513318375.png";
-import farmhouseWreath from "@assets/Untitled_design_-_10_1780513318375.png";
-import tropicalWreath from "@assets/Untitled_design_-_1_1780513318375.png";
-import lemonWreath from "@assets/Untitled_design_-_4_1780513318375.png";
-import orangeWreath from "@assets/IMG_5341_1780674836974.jpeg";
-import ladybugWreath from "@assets/IMG_5338_1780674857547.jpeg";
-import floralBurstWreath from "@assets/IMG_5332_1780766927698.jpeg";
-import watermelonWelcome from "@assets/IMG_5334_1780766927699.jpeg";
+import { collections } from "@/data/site";
 
-const CATEGORIES = [
-  {
-    title: "Spring Garden",
-    desc: "Bursting with gerbera daisies, sunflowers, and colorful blooms for a joyful front door.",
-    style: "full-floral",
-    image: springWreath,
-    cover: false,
-  },
-  {
-    title: "Coastal Charm",
-    desc: "Navy mesh, seashells, and a lighthouse centerpiece. Perfect for beach lovers.",
-    style: "coastal",
-    image: coastalWreath,
-    cover: false,
-  },
-  {
-    title: "Best is Yet to Come",
-    desc: "Vibrant orange citrus wreath with a 'The Best is Yet to Come' sign and deep plum bow. Bold and joyful.",
-    style: "seasonal",
-    image: orangeWreath,
-    cover: true,
-  },
-  {
-    title: "Ladybug Love",
-    desc: "Red polka dots, gingham ribbon, and sweet ladybug accents. Charming and one of a kind.",
-    style: "full-floral",
-    image: ladybugWreath,
-    cover: true,
-  },
-  {
-    title: "Summer Sunshine",
-    desc: "Bright and playful with a happy sun face and cheerful ribbon accents.",
-    style: "seasonal",
-    image: sunWreath,
-    cover: false,
-  },
-  {
-    title: "Farmhouse Style",
-    desc: "Burlap bows, gingham ribbon, and Southern charm that says 'hey y'all' to every guest.",
-    style: "farmhouse",
-    image: farmhouseWreath,
-    cover: false,
-  },
-  {
-    title: "Tropical Flair",
-    desc: "Hot pink deco mesh, flamingo accents, and tropical flowers for a bold statement.",
-    style: "seasonal",
-    image: tropicalWreath,
-    cover: false,
-  },
-  {
-    title: "Lemon Grove",
-    desc: "Fresh lemons, burlap base, and a striped bow. Sunshine on your door all season long.",
-    style: "everyday-greenery",
-    image: lemonWreath,
-    cover: false,
-  },
-  {
-    title: "Summer Floral Burst",
-    desc: "An explosion of gerberas, daisies, and butterflies in every summer color — full, lush, and joyful.",
-    style: "full-floral",
-    image: floralBurstWreath,
-    cover: true,
-  },
-  {
-    title: "Watermelon Welcome",
-    desc: "Sweet watermelon door hanger with a layered gingham bow — the perfect summer greeting.",
-    style: "seasonal",
-    image: watermelonWelcome,
-    cover: true,
-  },
-];
+const CATEGORIES = collections;
 
 type Category = typeof CATEGORIES[number];
 

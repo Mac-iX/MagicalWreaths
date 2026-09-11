@@ -1,0 +1,9 @@
+{
+  "framework": null,
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm --filter @workspace/magical-wreaths run build",
+  "outputDirectory": "artifacts/magical-wreaths/dist/public",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

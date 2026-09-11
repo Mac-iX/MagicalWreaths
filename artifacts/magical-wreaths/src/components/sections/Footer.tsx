@@ -1,4 +1,5 @@
 import { Heart, Instagram, Facebook, Mail } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 
 export function Footer() {
@@ -34,8 +35,10 @@ export function Footer() {
           <div>
             <h4 className="font-serif text-xl mb-6 text-primary">Explore</h4>
             <ul className="space-y-4 text-white/70">
+              <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
               <li><a href="#about" className="hover:text-white transition-colors">Meet Debbie</a></li>
               <li><a href="#gallery" className="hover:text-white transition-colors">The Collections</a></li>
+              <li><Link href="/gallery" className="hover:text-white transition-colors">Photo Gallery</Link></li>
               <li><a href="#process" className="hover:text-white transition-colors">How It Works</a></li>
               <li><a href="#testimonials" className="hover:text-white transition-colors">Testimonials</a></li>
             </ul>

@@ -1,26 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import coastalBow from "@assets/IMG_5326_1780671565348.jpeg";
-import patrioticBow from "@assets/IMG_5327_1780671565348.jpeg";
-import floralBow from "@assets/IMG_5330_1780671565348.jpeg";
+import { bows } from "@/data/site";
 
-const BOWS = [
-  {
-    title: "Coastal Retreat",
-    desc: "Turquoise starfish ribbon, sandy stripes, and seashell fabric. Pure beach house charm.",
-    image: coastalBow,
-  },
-  {
-    title: "Americana Pride",
-    desc: "Stars, stripes, and 'We the People' ribbon layered into a bold patriotic statement.",
-    image: patrioticBow,
-  },
-  {
-    title: "Floral & Denim",
-    desc: "Hot pink polka dots, garden florals, and soft denim. Feminine, fun, and one of a kind.",
-    image: floralBow,
-  },
-];
+const BOWS = bows;
 
 export function Bows() {
   return (

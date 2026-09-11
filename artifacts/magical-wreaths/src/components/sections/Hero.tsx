@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import springWreath from "@assets/Untitled_design_-_3_1780513318375.png";
 
 export function Hero() {
+  const [, navigate] = useLocation();
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-background">
       {/* Background Image with Overlay */}
@@ -56,7 +58,7 @@ export function Hero() {
               size="lg"
               variant="outline"
               className="rounded-full px-6 sm:px-8 h-12 sm:h-14 text-sm sm:text-base bg-white/50 backdrop-blur-md border-white/60 hover:bg-white w-full sm:w-auto transition-transform hover:-translate-y-1"
-              onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate("/gallery")}
               data-testid="button-hero-gallery"
             >
               View the Gallery

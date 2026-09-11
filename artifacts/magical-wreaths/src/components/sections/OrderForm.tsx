@@ -169,14 +169,19 @@ export function OrderForm({ preselectedStyle }: { preselectedStyle?: string }) {
     setIsSubmitting(true);
     setSubmitError(null);
     try {
-      const resp = await fetch("/api/orders", {
+      const sheetsUrl = (import.meta.env.VITE_GOOGLE_SHEETS_URL as string | undefined) ?? "";
+      if (!sheetsUrl) {
+        throw new Error("The order form isn't connected yet — please try again later.");
+      }
+      // text/plain avoids CORS preflight; the Apps Script reads the raw JSON body either way
+      const resp = await fetch(sheetsUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ timestamp: new Date().toISOString(), ...data }),
       });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error((err as { error?: string }).error || "Something went wrong. Please try again.");
+      const result = await resp.json().catch(() => ({})) as { success?: boolean; error?: string };
+      if (!resp.ok || !result.success) {
+        throw new Error(result.error || "Something went wrong. Please try again.");
       }
       setIsSubmitted(true);
     } catch (err) {
