@@ -1,5 +1,4 @@
 import { Router, type IRouter } from "express";
-import { ReplitConnectors } from "@replit/connectors-sdk";
 import { sendPushToDebbie } from "./push.js";
 import { db, ordersTable } from "@workspace/db";
 
@@ -151,47 +150,30 @@ router.post("/orders", async (req, res) => {
       return;
     }
 
-    const connectors = new ReplitConnectors();
-
-    const meResp = await connectors.proxy("google-mail", "/gmail/v1/users/me/profile");
-    const meData = await meResp.json() as { emailAddress?: string };
-    const senderEmail = meData.emailAddress || DEBBIE_EMAIL;
-
+    // Email delivery was retired from this API: the deployed order flow uses the
+    // Google Apps Script webhook (artifacts/magical-wreaths/google-apps-script.js),
+    // which writes to the Google Sheet and emails Debbie + the customer directly.
     const orderEmailRaw = encodeEmailToBase64(
       DEBBIE_EMAIL,
-      senderEmail,
+      DEBBIE_EMAIL,
       `🌿 New Order from ${order.name}`,
       buildOrderEmailHtml(order),
     );
-
-    const orderSendResp = await connectors.proxy("google-mail", "/gmail/v1/users/me/messages/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ raw: orderEmailRaw }),
-    });
-
-    if (!orderSendResp.ok) {
-      const errData = await orderSendResp.json();
-      console.error("Failed to send order email:", errData);
-      res.status(500).json({ error: "Failed to send order notification email" });
-      return;
-    }
-
     const customerEmail = String(order.email);
-    if (customerEmail && customerEmail !== DEBBIE_EMAIL) {
-      const confirmationEmailRaw = encodeEmailToBase64(
-        customerEmail,
-        senderEmail,
-        "Your order with Debbie's Magical Wreaths 🌿",
-        buildConfirmationEmailHtml(order),
-      );
+    const confirmationEmailRaw =
+      customerEmail && customerEmail !== DEBBIE_EMAIL
+        ? encodeEmailToBase64(
+            customerEmail,
+            DEBBIE_EMAIL,
+            "Your order with Debbie's Magical Wreaths 🌿",
+            buildConfirmationEmailHtml(order),
+          )
+        : null;
 
-      await connectors.proxy("google-mail", "/gmail/v1/users/me/messages/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ raw: confirmationEmailRaw }),
-      });
-    }
+    console.log(
+      `[orders] email delivery retired (Apps Script flow). Would notify ${DEBBIE_EMAIL}` +
+        ` (${orderEmailRaw.length} bytes)${confirmationEmailRaw ? ` and ${customerEmail}` : ""}.`,
+    );
 
     // Persist order to database
     try {
