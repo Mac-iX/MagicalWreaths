@@ -26,7 +26,8 @@ const SHEET_NAME = "Orders";
 
 function doPost(e) {
   try {
-    const data = JSON.parse(e.postData.contents);
+    const data = validateOrder(e);
+    consumeOrderBudget(data.email);
 
     // --- Write to Google Sheet ---
     const ss = getOrCreateSpreadsheet();
@@ -49,7 +50,7 @@ function doPost(e) {
       data.confirmFirst ? "Yes" : "No",
       data.notes || "",
       "New", // Status column — Debbie can change to "In Progress" or "Complete"
-    ]);
+    ].map(sheetSafeValue));
 
     // --- Send email to Debbie ---
     const subject = `\u2728 New Order from ${data.name || "a customer"}!`;
@@ -71,7 +72,7 @@ function doPost(e) {
 
   } catch (err) {
     return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: err.message }))
+      .createTextOutput(JSON.stringify({ success: false, error: "Unable to submit your order right now. Please check your details and try again later." }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
@@ -157,4 +158,47 @@ function ensureHeaders(sheet) {
     sheet.getRange(1, 1, 1, 15).setFontWeight("bold").setBackground("#f8d7e3");
     sheet.setFrozenRows(1);
   }
+}
+
+function validateOrder(event) {
+  const raw = event && event.postData && event.postData.contents;
+  if (typeof raw !== "string" || raw.length > 24000) throw new Error("Invalid order");
+  const data = JSON.parse(raw);
+  if (!data || Array.isArray(data) || typeof data !== "object") throw new Error("Invalid order");
+  for (const key of Object.keys(data)) {
+    if (key === "accents" || key === "confirmFirst") continue;
+    if (typeof data[key] !== "string" || data[key].length > (key === "notes" ? 8000 : 2000)) throw new Error("Invalid field");
+  }
+  if (typeof data.name !== "string" || !data.name.trim() || data.name.length > 200 || /[\r\n]/.test(data.name)) throw new Error("Invalid name");
+  if (typeof data.email !== "string" || data.email.length > 254 || !/^[^\s@,;<>"\\]+@[^\s@,;<>"\\]+\.[^\s@,;<>"\\]+$/.test(data.email)) throw new Error("Invalid email");
+  if (data.accents !== undefined && (!Array.isArray(data.accents) || data.accents.length > 30 || data.accents.some(v => typeof v !== "string" || v.length > 200))) throw new Error("Invalid accents");
+  if (data.confirmFirst !== undefined && typeof data.confirmFirst !== "boolean") throw new Error("Invalid confirmation");
+  data.name = data.name.trim();
+  data.email = data.email.trim().toLowerCase();
+  return data;
+}
+function sheetSafeValue(value) {
+  return typeof value === "string" && /^\s*[=+\-@]/.test(value) ? "'" + value : value;
+}
+// The lock and daily counter are shared across Apps Script executions.
+// Recipient hashes avoid retaining email addresses in the limiter cache.
+function consumeOrderBudget(email) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error("Retry later");
+  try {
+    const properties = PropertiesService.getScriptProperties();
+    const configured = Number(properties.getProperty("MW_MAX_ORDERS_PER_DAY"));
+    const maximum = Number.isInteger(configured) && configured > 0 ? configured : 40;
+    const day = new Date().toISOString().slice(0, 10);
+    const previous = JSON.parse(properties.getProperty("MW_ORDER_BUDGET") || "{}");
+    const count = previous.day === day ? Number(previous.count) || 0 : 0;
+    if (count >= maximum) throw new Error("Daily limit reached");
+    const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, email);
+    const key = "order:" + digest.map(b => ("0" + ((b + 256) % 256).toString(16)).slice(-2)).join("");
+    const cache = CacheService.getScriptCache();
+    const recent = Number(cache.get(key)) || 0;
+    if (recent >= 5) throw new Error("Retry later");
+    properties.setProperty("MW_ORDER_BUDGET", JSON.stringify({day: day, count: count + 1}));
+    cache.put(key, String(recent + 1), 3600);
+  } finally { lock.releaseLock(); }
 }
